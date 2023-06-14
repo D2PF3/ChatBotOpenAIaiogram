@@ -50,20 +50,12 @@ async def handle_message(message: types.Message, state: FSMContext):
     logging.info(f"User {user_id} input: {user_input}")
 
     async with state.proxy() as data:
-        user_messages = data.get("user_messages", [])
-        user_messages.append(user_input)
+        messages = data.get("messages", [])
+        messages.append({"role": "user", "content": user_input})
+        if len(messages) > 3:
+            messages = messages[-3:]
 
-        if len(user_messages) > 3:
-            user_messages = user_messages[-2:]
-
-        data["user_messages"] = user_messages
-
-    messages = [
-        {"role": "system", "content": "Ты отвечаешь на вопросы пользователя"},
-    ]
-
-    for msg in user_messages:
-        messages.append({"role": "user", "content": msg})
+        data["messages"] = messages
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -74,9 +66,14 @@ async def handle_message(message: types.Message, state: FSMContext):
     generated_text = response.choices[0].message.content
     logging.info(f"Neural network response: {generated_text}")
 
+    async with state.proxy() as data:
+        data["messages"].append({"role": "assistant", "content": generated_text})
+
     save_conversation(message.text, generated_text)
 
     await message.answer(generated_text)
+
+
 
 
 if __name__ == '__main__':
