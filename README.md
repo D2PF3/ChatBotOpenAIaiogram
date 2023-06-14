@@ -8,8 +8,8 @@
 
 - Python 3.7 и выше
 - [Pip](https://pip.pypa.io/en/stable/)
-- [OpenAI API Key](https://beta.openai.com/docs/developer-quickstart/your-api-keys/)
-- [Telegram Bot Token](https://core.telegram.org/bots#6-botfather)
+- [OpenAI API Key](https://platform.openai.com/account/api-keys)
+- [Telegram Bot Token](https://t.me/botfather)
 
 ## Установка и настройка
 
